@@ -78,7 +78,7 @@
             </tbody>
         </table>
 
-        <div class="px-5 py-5 rounded-b md:py-8 md:px-16 dark:bg-gray-700">
+        <div class="px-3 py-5 rounded-b md:py-8 md:px-5 dark:bg-gray-700">
             <div class="px-4 tasks-container"> <!-- Add the tasks-container class here -->
                 <!-- Tasks will be rendered here -->
             </div>
@@ -113,6 +113,48 @@
             const nextMonthButton = document.getElementById('next-month');
             const currentMonthYearElement = document.getElementById("current-month-year");
             const tasksContainer = document.querySelector('.tasks-container');
+            let tasks = [];
+
+            const tasksData = {
+                "2024-04-02": [{
+                        time: '9:00 AM',
+                        title: 'Zoom call with design team',
+                        description: 'Discussion on UX sprint and Wireframe review'
+                    },
+                    {
+                        time: '10:00 AM',
+                        title: 'Orientation session with new hires',
+                        description: ''
+                    },
+                    {
+                        time: '11:00 AM',
+                        title: 'Team meeting',
+                        description: 'Agenda: Project updates'
+                    }
+                ],
+                "2024-04-15": [{
+                        time: '9:00 AM',
+                        title: 'Client meeting',
+                        description: 'Presentation of project proposal'
+                    },
+                    {
+                        time: '1:00 PM',
+                        title: 'Development sprint planning',
+                        description: 'Sprint backlog grooming'
+                    }
+                ],
+                "2024-04-26": [{
+                        time: '10:00 AM',
+                        title: 'Next up: Project Proposal Presentation',
+                        description: 'Presentation of project proposal'
+                    },
+                    {
+                        time: '4:00 PM',
+                        title: 'Pizza Day 🍕',
+                        description: 'Pizza-fueled sprint sessions with champagne toasting at the finish line! 🍕🥂'
+                    }
+                ]
+            };
 
             const currentDate = new Date();
             let currentYear = currentDate.getFullYear();
@@ -162,7 +204,30 @@
             function createCalendarCell(day) {
                 const cell = document.createElement('td');
                 cell.textContent = day;
-                cell.classList.add('text-center', 'cursor-pointer');
+                cell.classList.add('text-center', 'cursor-pointer', 'relative', 'w-8');
+
+                if (day !== '') {
+                    const year = currentYear;
+                    const month = currentMonth + 1; //month is 0 indexed, so +1
+                    const formattedDate =
+                        `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+                    const tasksForDay = tasksData[formattedDate] || [];
+
+                    if (tasksForDay.length > 0) {
+                        const dot = document.createElement('div');
+                        const dotPing = document.createElement('div');
+                        dot.classList.add('absolute', 'top-0', 'right-0', 'w-1', 'h-1', 'mr-2', 'mt-0.5',
+                            'bg-red-400',
+                            'rounded-full');
+                        dotPing.classList.add('absolute', 'top-0', 'right-0', 'w-1', 'h-1', 'mr-2', 'mt-0.5',
+                            'bg-red-500',
+                            'rounded-full', 'animate-ping');
+                        cell.appendChild(dot);
+                        cell.appendChild(dotPing);
+
+                    }
+                }
 
                 cell.addEventListener('click', function() {
                     if (selectedDateCell !== null) {
@@ -214,51 +279,26 @@
             function updateTasks(selectedDate) {
                 tasksContainer.innerHTML = '';
 
-                let tasks = [];
-                if (selectedDate.getDate() === 1) {
-                    tasks = [{
-                            time: '9:00 AM',
-                            title: 'Zoom call with design team',
-                            description: 'Discussion on UX sprint and Wireframe review'
-                        },
-                        {
-                            time: '10:00 AM',
-                            title: 'Orientation session with new hires',
-                            description: ''
-                        },
-                        {
-                            time: '11:00 AM',
-                            title: 'Team meeting',
-                            description: 'Agenda: Project updates'
-                        }
-                    ];
-                } else if (selectedDate.getDate() === 15) {
-                    tasks = [{
-                            time: '9:00 AM',
-                            title: 'Client meeting',
-                            description: 'Presentation of project proposal'
-                        },
-                        {
-                            time: '1:00 PM',
-                            title: 'Development sprint planning',
-                            description: 'Sprint backlog grooming'
-                        }
-                    ];
-                } else {
-                    tasks = [{
-                        time: '⚡No tasks scheduled for this date 👉try 1st or 15th of April ',
-                        title: '',
-                        description: ''
-                    }];
-                }
+                const year = selectedDate.getFullYear();
+                const month = selectedDate.getMonth() + 1;
+                const day = selectedDate.getDate();
+                const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
-                // Render tasks
-                tasks.forEach(task => {
+                const selectedDateTasks = tasksData[formattedDate] || [{
+                    time: '⚡No tasks scheduled for this date 👉try 2st, 15th or 27th April ',
+                    title: '',
+                    description: ''
+                }];
+
+                // console.log(selectedDate);
+                // console.log(tasksData);
+
+                selectedDateTasks.forEach(task => {
                     const taskDiv = document.createElement('div');
                     taskDiv.classList.add('task');
                     taskDiv.innerHTML = `
                 <div class="pb-4 border-b border-gray-400 border-dashed">
-                    <p class="text-xs font-light leading-3 text-gray-500 dark:text-gray-300">${task.time}</p>
+                    <p class="mt-2 text-xs font-light leading-3 text-gray-500 dark:text-gray-300">${task.time}</p>
                     <a tabindex="0" class="mt-2 text-lg font-medium leading-5 text-gray-800 focus:outline-none dark:text-gray-100">${task.title}</a>
                     <p class="pt-2 text-sm leading-4 text-gray-600 dark:text-gray-300">${task.description}</p>
                 </div>
