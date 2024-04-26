@@ -62,6 +62,10 @@ Make sure you have the following installed:
     ```bash
     sail up -d
     ```
+9. **Run NPM**
+    ```bash
+    sail npm run dev
+    ```
 
 ## Usage
 
