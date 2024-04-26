@@ -67,6 +67,11 @@ Make sure you have the following installed:
     sail npm run dev
     ```
 
+9. **Run NPM**
+    ```bash
+    sail npm run dev
+    ```
+
 ## Usage
 
 Visit `http://localhost:8000` in your browser to view the application.
